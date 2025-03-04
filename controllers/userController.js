@@ -28,15 +28,44 @@ const login = async (req, res) => {
 };
 
 const addUser = async (req, res) => {
-  // Similar to register but for admin use
+  try {
+    const { name, email, password, role } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({ name, email, password: hashedPassword, role });
+    res.status(201).json({ message: 'Admin added a new user', user });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 const updateUser = async (req, res) => {
-  // Update user logic
+  try {
+    const { id } = req.params;
+    const { name, email, password } = req.body;
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    const hashedPassword = password ? await bcrypt.hash(password, 10) : user.password;
+    await user.update({ name, email, password: hashedPassword });
+    res.json({ message: 'User updated successfully', user });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 const deleteUser = async (req, res) => {
-  // Delete user logic
+  try {
+    const { id } = req.params;
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    await user.destroy();
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 module.exports = { register, login, addUser, updateUser, deleteUser };
