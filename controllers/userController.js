@@ -13,7 +13,7 @@ const register = async (req, res) => {
   }
 };
 
-/*const login = async (req, res) => {
+const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ where: { email } });
@@ -38,5 +38,5 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   // Delete user logic
 };
-*/
+
 module.exports = { register, login, addUser, updateUser, deleteUser };
